@@ -168,21 +168,21 @@
           <span id="btnLabel">Enviar y agendar reunión</span>
         </button>
       </div>
-      <p class="text-center text-xs text-slate-400 mt-4">Tus datos quedan guardados de forma segura y el equipo de Ideal Emprende te contactará a la brevedad.</p>
+      <p id="pieForm" class="text-center text-xs text-slate-400 mt-4">Tus datos quedan guardados de forma segura y el equipo de Ideal Emprende te contactará a la brevedad.</p>
+
+      <!-- Éxito (reemplaza al formulario dentro de la misma tarjeta) -->
+      <div id="exitoCard" class="hidden text-center py-6 pop">
+        <div class="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+          <svg class="w-9 h-9 text-emerald-600 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <h3 class="text-xl font-extrabold txt-navy">¡Solicitud enviada!</h3>
+        <p class="text-slate-600 text-sm mt-2 max-w-sm mx-auto">Quedó guardada correctamente. El equipo de <b>Ideal Emprende</b> te contactará para coordinar la reunión.</p>
+        <button onclick="location.reload()" class="mt-5 text-sm font-semibold txt-orange underline underline-offset-4">Enviar otra solicitud</button>
+      </div>
     </form>
   </div>
 
-  <!-- Éxito -->
-  <div id="successOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center pop">
-      <div class="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
-        <svg class="w-9 h-9 text-emerald-600 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-      </div>
-      <h3 class="text-xl font-extrabold txt-navy">¡Solicitud enviada!</h3>
-      <p class="text-slate-600 text-sm mt-2">Quedó guardada correctamente. El equipo de <b>Ideal Emprende</b> te contactará para coordinar la reunión.</p>
-      <button onclick="cerrarModal()" class="btn mt-6 w-full bg-orange text-white font-semibold py-2.5 rounded-lg">Entendido</button>
-    </div>
-  </div>
+
 
   <script>
     // ---------- Formulario por pasos (criterios de aceptación) ----------
@@ -275,15 +275,14 @@
       btn.disabled = true; btn.classList.add('opacity-90','cursor-wait');
       sp.classList.remove('hidden'); lb.textContent = 'Enviando...';
       setTimeout(function(){
-        sp.classList.add('hidden'); lb.textContent = 'Enviar y agendar reunión';
-        btn.disabled = false; btn.classList.remove('opacity-90','cursor-wait');
-        var ov = document.getElementById('successOverlay');
-        ov.classList.remove('hidden'); ov.classList.add('flex');
+        // El éxito reemplaza al formulario dentro de la misma tarjeta (el iframe se achica solo)
+        document.querySelectorAll('.wstep').forEach(function(x){ x.classList.remove('on'); });
+        document.getElementById('wizProgress').classList.add('hidden');
+        btn.parentElement.classList.add('hidden');
+        document.getElementById('pieForm').classList.add('hidden');
+        document.getElementById('exitoCard').classList.remove('hidden');
+        avisarAltura();
       }, 1400);
-    }
-    function cerrarModal(){
-      var ov = document.getElementById('successOverlay');
-      ov.classList.add('hidden'); ov.classList.remove('flex');
     }
 
     // Aviso de altura al padre (para que el iframe de WordPress mida exactamente el formulario)
