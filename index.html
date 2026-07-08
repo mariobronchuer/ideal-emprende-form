@@ -45,11 +45,12 @@
 <body class="text-slate-800">
 
   <div id="wrap" class="max-w-3xl mx-auto p-1">
-    <form class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8 fade-in" onsubmit="return false">
+    <form id="cardForm" class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8 fade-in flex flex-col" onsubmit="return false">
 
       <!-- Progreso -->
       <div id="wizProgress" class="flex items-center gap-1.5 mb-6"></div>
 
+      <div id="pasos" class="flex-1 flex flex-col justify-center">
       <!-- PASO: datos de contacto -->
       <section class="wstep on" data-step="contacto">
         <h3 class="font-extrabold txt-navy text-lg mb-4">Cuéntanos de ti</h3>
@@ -158,8 +159,10 @@
         </div>
       </section>
 
+      </div>
+
       <!-- Navegación -->
-      <div class="flex items-center gap-3 pt-6">
+      <div id="navForm" class="flex items-center gap-3 pt-6">
         <button type="button" id="btnAtras" onclick="retroceder()" class="text-sm font-bold text-slate-400 hover:text-slate-600 px-2 py-2">← Atrás</button>
         <div class="flex-1"></div>
         <button type="button" id="btnNext" onclick="avanzar()" class="btn bg-navy text-white font-bold py-2.5 px-8 rounded-xl">Continuar →</button>
@@ -171,7 +174,7 @@
       <p id="pieForm" class="text-center text-xs text-slate-400 mt-4">Tus datos quedan guardados de forma segura y el equipo de Ideal Emprende te contactará a la brevedad.</p>
 
       <!-- Éxito (reemplaza al formulario dentro de la misma tarjeta) -->
-      <div id="exitoCard" class="hidden text-center py-6 pop">
+      <div id="exitoCard" class="hidden flex-1 flex-col justify-center text-center py-6 pop">
         <div class="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
           <svg class="w-9 h-9 text-emerald-600 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
         </div>
@@ -275,12 +278,13 @@
       btn.disabled = true; btn.classList.add('opacity-90','cursor-wait');
       sp.classList.remove('hidden'); lb.textContent = 'Enviando...';
       setTimeout(function(){
-        // El éxito reemplaza al formulario dentro de la misma tarjeta (el iframe se achica solo)
-        document.querySelectorAll('.wstep').forEach(function(x){ x.classList.remove('on'); });
+        // El éxito reemplaza al formulario, centrado en el mismo cuadro (mismo porte)
+        document.getElementById('pasos').classList.add('hidden');
         document.getElementById('wizProgress').classList.add('hidden');
-        btn.parentElement.classList.add('hidden');
+        document.getElementById('navForm').classList.add('hidden');
         document.getElementById('pieForm').classList.add('hidden');
-        document.getElementById('exitoCard').classList.remove('hidden');
+        var ec = document.getElementById('exitoCard');
+        ec.classList.remove('hidden'); ec.classList.add('flex');
         avisarAltura();
       }, 1400);
     }
@@ -292,7 +296,13 @@
         parent.postMessage({ ieFormAltura: h }, '*');
       } catch (e) {}
     }
-    window.addEventListener('load', avisarAltura);
+    // Porte estable: el cuadro se fija a la altura de su paso más alto (el paso 1);
+    // los pasos cortos se centran verticalmente y la página nunca salta.
+    window.addEventListener('load', function(){
+      var card = document.getElementById('cardForm');
+      card.style.minHeight = card.offsetHeight + 'px';
+      avisarAltura();
+    });
     if (window.ResizeObserver) new ResizeObserver(avisarAltura).observe(document.getElementById('wrap'));
 
     pintar();
