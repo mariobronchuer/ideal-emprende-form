@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ideal Emprende · Formulario de contacto</title>
+  <link rel="icon" href="favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{--ie-orange:#E8551F;--ie-navy:#2B3A5C}
+    /* Fondo transparente: el formulario hereda el fondo de la página WordPress que lo embebe */
+    html,body{background:transparent}
+    body{font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    .txt-orange{color:var(--ie-orange)}.txt-navy{color:var(--ie-navy)}
+    .bg-orange{background:var(--ie-orange)}.bg-navy{background:var(--ie-navy)}
+    .field{border:1.5px solid #d7dbe3;border-radius:.65rem;padding:.65rem .8rem;width:100%;background:#fff;color:#1e293b;transition:border-color .15s,box-shadow .15s}
+    .field:focus{outline:none;border-color:var(--ie-orange);box-shadow:0 0 0 3px rgba(232,85,31,.15)}
+    input.field,select.field{height:48px}
+    select.field{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .7rem center;padding-right:2.2rem}
+    .field-ro{background:#f8fafc}
+    label{font-size:.82rem;font-weight:600;color:#334155;margin-bottom:.3rem;display:block}
+    .opt{border:1.5px solid #d7dbe3;border-radius:.75rem;padding:.8rem 1rem;cursor:pointer;font-weight:600;color:#334155;display:flex;align-items:center;gap:.6rem;transition:border-color .15s,background .15s,box-shadow .15s;background:#fff}
+    .opt:hover{border-color:var(--ie-orange)}
+    .opt.sel{border-color:var(--ie-orange);background:rgba(232,85,31,.06);box-shadow:0 0 0 3px rgba(232,85,31,.12)}
+    .opt.sel b{color:var(--ie-orange)}
+    .wdot{height:6px;border-radius:9999px;background:#e2e8f0;flex:1;transition:background .25s}
+    .wdot.on{background:var(--ie-orange)}
+    .wstep{display:none}
+    .wstep.on{display:block;animation:floatUp .35s ease}
+    .chip-res{font-size:.75rem;font-weight:700;background:#f1f5f9;color:#475569;border-radius:9999px;padding:.25rem .75rem}
+    @keyframes floatUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .fade-in{opacity:0;animation:floatUp .7s ease forwards}
+    .btn{transition:transform .15s,filter .15s}.btn:hover{transform:translateY(-2px);filter:brightness(1.06)}
+    .spinner{width:20px;height:20px;border-radius:50%;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes pop{0%{opacity:0;transform:scale(.9) translateY(10px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+    .pop{animation:pop .35s cubic-bezier(.2,.9,.3,1.2)}
+    @keyframes draw{from{stroke-dasharray:0 40}to{stroke-dasharray:40 0}}
+    .check path{stroke-dasharray:40;animation:draw .5s .15s ease forwards}
+    .icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  </style>
+</head>
+<body class="text-slate-800">
+
+  <div class="max-w-3xl mx-auto p-4 md:p-6">
+    <form class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8 fade-in" onsubmit="return false">
+
+      <!-- Progreso -->
+      <div id="wizProgress" class="flex items-center gap-1.5 mb-6"></div>
+
+      <!-- PASO: datos de contacto -->
+      <section class="wstep on" data-step="contacto">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">Cuéntanos de ti</h3>
+        <div class="grid md:grid-cols-2 gap-5">
+          <div><label>Nombre completo *</label><input class="field" placeholder="Tu nombre y apellido" /></div>
+          <div>
+            <label>¿Tienes empresa? *</label>
+            <div class="flex gap-2">
+              <div class="opt flex-1 justify-center" onclick="elegir('empresa','si',this)"><b>Sí</b></div>
+              <div class="opt flex-1 justify-center" onclick="elegir('empresa','no',this)"><b>No</b></div>
+            </div>
+          </div>
+          <div id="rutWrap" class="hidden"><label>RUT de la empresa *</label>
+            <div class="relative">
+              <input id="rutInput" class="field pr-10" placeholder="76.123.456-7" onblur="buscarEmpresa()" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}" />
+              <span id="rutSpin" class="hidden absolute right-3 top-1/2 -translate-y-1/2" style="width:16px;height:16px;border-radius:50%;border:2.5px solid rgba(232,85,31,.25);border-top-color:#E8551F;animation:spin .7s linear infinite"></span>
+            </div>
+          </div>
+          <div id="nombreEmpresaWrap" class="hidden"><label>Razón social <span class="text-slate-400 font-normal">(automática desde el SII)</span></label>
+            <input id="nombreEmpresa" class="field field-ro" placeholder="Se completa al escribir el RUT" readonly />
+          </div>
+          <div><label>Correo electrónico *</label><input class="field" type="email" placeholder="tucorreo@ejemplo.cl" /></div>
+          <div>
+            <label>WhatsApp *</label>
+            <div class="flex gap-2">
+              <select class="field" style="max-width:100px"><option>+56</option><option>+54</option><option>+51</option><option>+57</option><option>+52</option><option>+1</option><option>+34</option></select>
+              <input class="field" placeholder="9 1234 5678" />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label>País *</label><select class="field"><option>Chile</option><option>Argentina</option><option>Perú</option><option>Colombia</option><option>México</option><option>Otro</option></select></div>
+            <div><label>Ciudad *</label><input class="field" placeholder="Tu ciudad" /></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO: qué buscas -->
+      <section class="wstep" data-step="busca">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">¿Qué buscas desarrollar?</h3>
+        <div class="opt" onclick="elegir('busca','Suplementos',this)">
+          <div><b>Suplementos alimenticios</b>
+          <p class="text-xs text-slate-400 font-normal mt-1">Los suplementos son productos que complementan la alimentación: proteínas, vitaminas, colágeno, creatina y más — en cápsulas, polvos u otros formatos, con tu propia marca.</p></div>
+        </div>
+      </section>
+
+      <!-- PASO: experiencia -->
+      <section class="wstep" data-step="exp">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">¿Has fabricado suplementos antes?</h3>
+        <div class="grid md:grid-cols-2 gap-3">
+          <div class="opt" onclick="elegir('exp','si',this)">
+            <div><b>Sí, ya tengo experiencia</b><p class="text-xs text-slate-400 font-normal mt-1">Pasas directo a agendar una reunión con el equipo.</p></div>
+          </div>
+          <div class="opt" onclick="elegir('exp','no',this)">
+            <div><b>No, sería mi primera vez</b><p class="text-xs text-slate-400 font-normal mt-1">Te haremos un par de preguntas para orientarte mejor.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO: tipo de suplemento (solo sin experiencia) -->
+      <section class="wstep" data-step="tipo">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">¿Qué tipo de suplemento tienes en mente?</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="opt justify-center" onclick="elegir('tipo','Cápsulas',this)"><b>Cápsulas</b></div>
+          <div class="opt justify-center" onclick="elegir('tipo','Sachet',this)"><b>Sachet</b></div>
+          <div class="opt justify-center" onclick="elegir('tipo','Pote (polvo)',this)"><b>Pote (polvo)</b></div>
+          <div class="opt justify-center" onclick="elegir('tipo','Aún no lo decido',this)"><b>Aún no lo decido</b></div>
+        </div>
+      </section>
+
+      <!-- PASO: presupuesto -->
+      <section class="wstep" data-step="presupuesto">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">¿Con qué presupuesto cuentas para partir?</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="opt justify-center" onclick="elegir('presupuesto','~$500.000',this)"><b>~$500.000</b></div>
+          <div class="opt justify-center" onclick="elegir('presupuesto','~$700.000',this)"><b>~$700.000</b></div>
+          <div class="opt justify-center" onclick="elegir('presupuesto','$1.000.000 o más',this)"><b>$1.000.000 o más</b></div>
+          <div class="opt justify-center" onclick="elegir('presupuesto','Aún no lo tengo claro',this)"><b>Aún no lo tengo claro</b></div>
+        </div>
+      </section>
+
+      <!-- PASO: fórmula -->
+      <section class="wstep" data-step="formula">
+        <h3 class="font-extrabold txt-navy text-lg mb-4">¿Cuentas con la fórmula de tu producto?</h3>
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <div class="opt justify-center" onclick="elegir('formula','si',this)"><b>Sí, tengo la fórmula</b></div>
+          <div class="opt justify-center" onclick="elegir('formula','no',this)"><b>Todavía no</b></div>
+        </div>
+        <div id="unidadesWrap" class="hidden">
+          <label>¿Cuántas unidades quieres producir? (mínimo 300) *</label>
+          <select id="unidadesSel" class="field">
+            <option>300 – 500 unidades</option>
+            <option>500 – 1.000 unidades</option>
+            <option>1.000 – 5.000 unidades</option>
+            <option>Más de 5.000 unidades</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- PASO FINAL: agendar -->
+      <section class="wstep" data-step="agenda">
+        <h3 class="font-extrabold txt-navy text-lg mb-2">¡Último paso! Agendemos una reunión</h3>
+        <p id="agendaIntro" class="text-sm text-slate-500 mb-4"></p>
+        <div id="resumen" class="flex flex-wrap gap-2 mb-5"></div>
+        <div><label>¿Cuándo te acomoda que te contactemos?</label>
+          <select class="field"><option>Lo antes posible</option><option>Mañana en la mañana</option><option>Mañana en la tarde</option><option>Durante esta semana</option></select>
+        </div>
+      </section>
+
+      <!-- Navegación -->
+      <div class="flex items-center gap-3 pt-6">
+        <button type="button" id="btnAtras" onclick="retroceder()" class="text-sm font-bold text-slate-400 hover:text-slate-600 px-2 py-2">← Atrás</button>
+        <div class="flex-1"></div>
+        <button type="button" id="btnNext" onclick="avanzar()" class="btn bg-navy text-white font-bold py-2.5 px-8 rounded-xl">Continuar →</button>
+        <button id="submitBtn" type="button" onclick="enviarSolicitud()" class="btn hidden bg-orange text-white font-bold py-2.5 px-6 rounded-xl flex items-center justify-center gap-3">
+          <span id="btnSpinner" class="spinner hidden"></span>
+          <span id="btnLabel">Enviar y agendar reunión</span>
+        </button>
+      </div>
+      <p class="text-center text-xs text-slate-400 mt-4">Tus datos quedan guardados de forma segura y el equipo de Ideal Emprende te contactará a la brevedad.</p>
+    </form>
+  </div>
+
+  <!-- Éxito -->
+  <div id="successOverlay" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-8 text-center pop">
+      <div class="mx-auto w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
+        <svg class="w-9 h-9 text-emerald-600 check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <h3 class="text-xl font-extrabold txt-navy">¡Solicitud enviada!</h3>
+      <p class="text-slate-600 text-sm mt-2">Quedó guardada correctamente. El equipo de <b>Ideal Emprende</b> te contactará para coordinar la reunión.</p>
+      <button onclick="cerrarModal()" class="btn mt-6 w-full bg-orange text-white font-semibold py-2.5 rounded-lg">Entendido</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Formulario por pasos (criterios de aceptación) ----------
+    // NOTA MAQUETA: el envío y la consulta al SII son simulados. En el sistema real,
+    // el submit hace POST a la API y el RUT consulta src/lib/rutService.ts (API SII).
+    var respuestas = { empresa:null, busca:null, exp:null, tipo:null, presupuesto:null, formula:null, unidades:'300 – 500 unidades' };
+    var pasoIdx = 0;
+
+    function pasosActuales(){
+      var base = ['contacto','busca','exp'];
+      if (respuestas.exp === 'si') return base.concat(['agenda']);
+      return base.concat(['tipo','presupuesto','formula','agenda']);
+    }
+
+    function pintar(){
+      var pasos = pasosActuales();
+      document.querySelectorAll('.wstep').forEach(function(s){ s.classList.remove('on'); });
+      document.querySelector('.wstep[data-step="'+pasos[pasoIdx]+'"]').classList.add('on');
+      var prog = document.getElementById('wizProgress'); prog.innerHTML = '';
+      pasos.forEach(function(_, i){ var d = document.createElement('span'); d.className = 'wdot' + (i <= pasoIdx ? ' on' : ''); prog.appendChild(d); });
+      document.getElementById('btnAtras').style.visibility = pasoIdx === 0 ? 'hidden' : 'visible';
+      var ultimo = pasoIdx === pasos.length - 1;
+      document.getElementById('btnNext').classList.toggle('hidden', ultimo);
+      document.getElementById('submitBtn').classList.toggle('hidden', !ultimo);
+      if (pasos[pasoIdx] === 'agenda') pintarResumen();
+      avisarAltura();
+    }
+    function avanzar(){ var pasos = pasosActuales(); if (pasoIdx < pasos.length - 1) { pasoIdx++; pintar(); } }
+    function retroceder(){ if (pasoIdx > 0) { pasoIdx--; pintar(); } }
+
+    function elegir(grupo, valor, el){
+      respuestas[grupo] = valor;
+      el.parentElement.querySelectorAll('.opt').forEach(function(o){ o.classList.remove('sel'); });
+      el.classList.add('sel');
+      if (grupo === 'empresa') {
+        document.getElementById('rutWrap').classList.toggle('hidden', valor !== 'si');
+        document.getElementById('nombreEmpresaWrap').classList.toggle('hidden', valor !== 'si');
+        avisarAltura();
+      }
+      if (grupo === 'formula') { document.getElementById('unidadesWrap').classList.toggle('hidden', valor !== 'si'); avisarAltura(); }
+      if (['busca','exp','tipo','presupuesto'].indexOf(grupo) !== -1) setTimeout(avanzar, 280);
+    }
+
+    function pintarResumen(){
+      var intro = document.getElementById('agendaIntro');
+      if (respuestas.exp === 'si') {
+        intro.innerHTML = 'Como <b>ya tienes experiencia fabricando suplementos</b>, coordinamos altiro una reunión con el equipo.';
+      } else {
+        intro.textContent = 'Con esta información el equipo te orienta y coordina la reunión contigo.';
+      }
+      var chips = [];
+      if (respuestas.busca) chips.push(respuestas.busca);
+      chips.push(respuestas.exp === 'si' ? 'Con experiencia' : 'Primera vez');
+      if (respuestas.exp !== 'si') {
+        if (respuestas.tipo) chips.push(respuestas.tipo);
+        if (respuestas.presupuesto) chips.push('Presupuesto: ' + respuestas.presupuesto);
+        chips.push(respuestas.formula === 'si' ? 'Con fórmula · ' + respuestas.unidades : 'Sin fórmula aún');
+      }
+      var box = document.getElementById('resumen'); box.innerHTML = '';
+      chips.forEach(function(c){ var s = document.createElement('span'); s.className = 'chip-res'; s.textContent = c; box.appendChild(s); });
+    }
+
+    document.getElementById('unidadesSel').onchange = function(){ respuestas.unidades = this.value; };
+
+    // Consulta al SII simulada (real: API JSON directa del SII vía backend)
+    var empresasDemo = {
+      '769716289': 'NUTRICION NATURAL SPA',
+      '771234567': 'NUTRIVIDA SPA',
+      '762060523': 'SERVICIOS INFORMATICOS DESOFT LIMITADA'
+    };
+    function buscarEmpresa(){
+      var rut = document.getElementById('rutInput').value.replace(/[.\-\s]/g, '').toUpperCase();
+      var out = document.getElementById('nombreEmpresa');
+      if (rut.length < 8) { out.value = ''; return; }
+      var spin = document.getElementById('rutSpin');
+      spin.classList.remove('hidden');
+      out.value = '';
+      out.placeholder = 'Consultando al SII...';
+      setTimeout(function(){
+        spin.classList.add('hidden');
+        out.value = empresasDemo[rut] || 'COMERCIALIZADORA EJEMPLO SPA';
+        out.placeholder = 'Se completa al escribir el RUT';
+      }, 900);
+    }
+
+    function enviarSolicitud(){
+      var btn = document.getElementById('submitBtn');
+      var sp = document.getElementById('btnSpinner');
+      var lb = document.getElementById('btnLabel');
+      btn.disabled = true; btn.classList.add('opacity-90','cursor-wait');
+      sp.classList.remove('hidden'); lb.textContent = 'Enviando...';
+      setTimeout(function(){
+        sp.classList.add('hidden'); lb.textContent = 'Enviar y agendar reunión';
+        btn.disabled = false; btn.classList.remove('opacity-90','cursor-wait');
+        var ov = document.getElementById('successOverlay');
+        ov.classList.remove('hidden'); ov.classList.add('flex');
+      }, 1400);
+    }
+    function cerrarModal(){
+      var ov = document.getElementById('successOverlay');
+      ov.classList.add('hidden'); ov.classList.remove('flex');
+    }
+
+    // Aviso de altura al padre (para que el iframe de WordPress se ajuste solo)
+    function avisarAltura(){
+      setTimeout(function(){
+        try { parent.postMessage({ ieFormAltura: document.body.scrollHeight }, '*'); } catch (e) {}
+      }, 400);
+    }
+
+    pintar();
+  </script>
+</body>
+</html>
